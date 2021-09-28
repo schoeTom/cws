@@ -55,7 +55,51 @@ def initialize_global_variables():
                             "Latriness and other urban Proportion of population using improved sanitation facilities (including shared)":44,
                             "Septic tanks urban Proportion of population using improved sanitation facilities (including shared)":45,
                             "Sewer connections urban Proportion of population using improved sanitation facilities (including shared)":46,
-                            "SDG region":47, "WHO region":48, "UNICEF Programming region":49, "UNICEF Reporting region":50}
+                            "SDG region":47, "WHO region":48, "UNICEF Programming region":49, "UNICEF Reporting region":50
+                            }
+
+    global variables_water
+    variables_water = {"Country":0, "ISO3":1, "Year":2, "Population (thousands)":3, "% urban population":4,
+                       "at least basic national water":5, "limited national water":6, "unimproved national water":7,
+                       "surface water national":8, "annual rate of change in basic national water":9,
+                       "at least basic rural water":10, "limited rural water":11, "unimproved rural water":12,
+                       "surface water rural":13, "annual rate of change in basic rural water":14,
+                       "at least basic urban water":15, "limited urban water":16, "unimproved urban water":17,
+                       "surface water urban":18, "annual rate of change in basic urban water":19,
+                       "safely managed national proportion of population using improved water supplies":20,
+                       "accessible on premises national proportion of population using improved water supplies":21,
+                       "available when needed national proportion of population using improved water supplies":22,
+                       "free from contamination national proportion of population using improved water supplies":23,
+                       "annual rate of change in safely managed national proportion of population using improved water supplies":24,
+                       "piped national proportion of population using improved water supplies":25,
+                       "non-piped national proportion of population using improved water supplies":26,
+                       "safely managed rural proportion of population using improved water supplies":27,
+                       "accessible on premises rural proportion of population using improved water supplies":28,
+                       "available when needed rural proportion of population using improved water supplies":29,
+                       "free from contamination rural proportion of population using improved water supplies":30,
+                       "annual rate of change in safely managed rural proportion of population using improved water supplies":31,
+                       "piped rural proportion of population using improved water supplies":32,
+                       "non-piped rural proportion of population using improved water supplies":33,
+                       "safely managed urban proportion of population using improved water supplies":34,
+                       "accessible on premises urban proportion of population using improved water supplies":35,
+                       "available when needed urban proportion of population using improved water supplies":36,
+                       "free from contamination urban proportion of population using improved water supplies":37,
+                       "annual rate of change in safely managed urban proportion of population using improved water supplies":38,
+                       "piped urban proportion of population using improved water supplies":39,
+                       "non-piped urban proportion of population using improved water supplies":40,
+                       "SDG region":41, "WHO region":42, "UNICEF programming region":43, "UNICEF reporting region":44
+                       }
+
+    global variables_hygiene
+    variables_hygiene = {"Country":0, "ISO3":1, "Year":2, "Population (thousands)":3, "% urban population":4,
+                         "basic national hygiene":5, "limited national hygiene":6, "no facility national hygiene":7,
+                         "annual rate of basic change in national hygiene":8, "basic rural hygiene":9,
+                         "limited rural hygiene":10, "no facility rural hygiene":11,
+                         "annual rate of change in basic rural hygiene":12, "basic urban hygiene":13,
+                         "limited urban hygiene":14, "no facility urban hygiene":15,
+                         "annual rate of change in basic urban sanitation":16, "SDG region":17, "WHO region":18,
+                         "UNICEF programming region":19, "UNICEF reporting region":20
+                        }
 
     read_data()
 
