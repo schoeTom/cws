@@ -8,6 +8,7 @@ import dash                            #bokeh for virtualization
 import plotly.express as px
 import math
 import seaborn as sns
+from Diagram import Diagram
 
 #initializes all variables, that are needed throughout a lot of functions
 def initialize_global_variables():
@@ -275,5 +276,8 @@ def run_program():
     #clean_data()
     #dfs = dfSanitation
     #print(type(dfs.iloc[38][6]))
+    d1 = Diagram("Scatter")
+    print(d1.type)
+
 
 run_program()
