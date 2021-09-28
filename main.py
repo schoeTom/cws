@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt        #folium for maps
 import dash                            #bokeh for virtualization
-import dash_html_components as html
+#import dash_html_components as html
 import plotly.express as px
 import math
 import seaborn as sns
@@ -64,10 +64,9 @@ def read_data():
     global dfWater
     global dfSanitation
     global dfHygiene
-    dfWater = pd.read_csv("Water_12_08_2021.csv", header=0)
-    dfSanitation = pd.read_csv("Sanitation_12_08_2021.csv", header=1, index_col=0)
-    dfSanitation = dfSanitation.fillna(0)
-    dfHygiene = pd.read_csv("Hygiene_12_08_2021.csv", header=0)
+    dfWater = pd.read_csv("Water_28_09_2021.csv", header=0, index_col=0)
+    dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=0, index_col=0)
+    dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=0, index_col=0)
 
 #copies excel sheets to single excel files
 def copy_excel_file():
@@ -207,13 +206,14 @@ def excel_to_csv():
     read_file.to_csv(r'C:\Users\schoe\PycharmProjects\testing\Sanitation_12_08_2021.csv', index = None, header=True)
 
 
-#currently cleans sanitation, dont use unless new copy of sanitation
+#currently cleans water, shouldnt be needed ever again, dont know why i dont just delete this method
 def clean_data():
-    global dfSanitation
-    dfSanitation = dfSanitation.replace("<1", "0.1")
-    dfSanitation = dfSanitation.replace(">99", "99.9")
-    dfSanitation = dfSanitation.replace("-", "0")
-    dfSanitation.to_csv("Sanitation_12_08_2021.csv")
+    global dfHygiene
+    dfHygiene = dfHygiene.replace("<1", "0.1")
+    dfHygiene = dfHygiene.replace(">99", "99.9")
+    dfHygiene = dfHygiene.replace("-", "0")
+    dfHygiene = dfHygiene.fillna(0)
+    dfHygiene.to_csv("Hygiene_28_09_2021.csv")
 
 #pretty much the main function, but havent googled yet on how to do it properly
 def run_program():
@@ -222,7 +222,7 @@ def run_program():
     #get_user_input()
     #print_single_country(year=2005)
     #print_single_variable_over_time()
-    lineplotSingleVariableOverTime(nations=["Germany", "Switzerland", "Madagascar", "Russian Federation"], variable="Population (thousands)")
+    #lineplotSingleVariableOverTime(nations=["Germany", "Switzerland", "Madagascar", "Russian Federation"], variable="Population (thousands)")
     #barplotSingleVariableOverTime(nations=["Germany", "Switzerland", "Madagascar", "Russian Federation"], variable="Population (thousands)")
     #scatterplotDifferentVariables(varX="Year",varY="Sewer connections urban Proportion of population using improved sanitation facilities (including shared)",nation="Madagascar")
     #scatterplotThreeVariables()
