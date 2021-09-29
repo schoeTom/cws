@@ -8,8 +8,6 @@ import dash                            #bokeh for virtualization
 import plotly.express as px
 import math
 import seaborn as sns
-from Diagram import Diagram
-from Diagram import Type
 
 from enum import Enum
 class Sheet(Enum):
@@ -165,6 +163,5 @@ def clean_data():
 #pretty much the main function, but havent googled yet on how to do it properly
 def run_program():
     initialize_global_variables()
-    print("hallo")
 
 run_program()
