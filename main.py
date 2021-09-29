@@ -9,14 +9,16 @@ import plotly.express as px
 import math
 import seaborn as sns
 from Diagram import Diagram
+from Diagram import Type
+
+from enum import Enum
+class Sheet(Enum):
+    WATER = 0
+    SANITATION = 1
+    HYGIENE = 2
 
 #initializes all variables, that are needed throughout a lot of functions
 def initialize_global_variables():
-    global country
-    global sheet
-    global year
-    global countryISO3
-    countryISO3 = {'DEU', 'GHA', 'GIB', 'MDG'}
 
     #variables_sanitation is a dictionary mapping each variable from the sanitation datasheet to
     #its column index in the datasheet, to have easy integerbased access to the column
@@ -59,6 +61,8 @@ def initialize_global_variables():
                             "SDG region":47, "WHO region":48, "UNICEF Programming region":49, "UNICEF Reporting region":50
                             }
 
+    # variables_water is a dictionary mapping each variable from the water datasheet to
+    # its column index in the datasheet, to have easy integerbased access to the column
     global variables_water
     variables_water = {"Country":0, "ISO3":1, "Year":2, "Population (thousands)":3, "% urban population":4,
                        "at least basic national water":5, "limited national water":6, "unimproved national water":7,
@@ -91,6 +95,8 @@ def initialize_global_variables():
                        "SDG region":41, "WHO region":42, "UNICEF programming region":43, "UNICEF reporting region":44
                        }
 
+    # variables_hygiene is a dictionary mapping each variable from the hygiene datasheet to
+    # its column index in the datasheet, to have easy integerbased access to the column
     global variables_hygiene
     variables_hygiene = {"Country":0, "ISO3":1, "Year":2, "Population (thousands)":3, "% urban population":4,
                          "basic national hygiene":5, "limited national hygiene":6, "no facility national hygiene":7,
@@ -113,112 +119,8 @@ def read_data():
     dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=0, index_col=0)
     dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=0, index_col=0)
 
-#copies excel sheets to single excel files
-def copy_excel_file():
-    path1 = "JMP_2021_WLD.xlsx"
-    path2 = "WHS_11_08_2021.xlsx"
-    wb1 = xl.load_workbook(filename=path1)
-    ws1 = wb1.worksheets[3]
-    wb2 = xl.load_workbook(filename=path2)
-    ws2 = wb2.create_sheet(ws1.title)
-    for row in ws1:
-        for cell in row:
-            ws2[cell.coordinate].value = cell.value
-    wb2.save(path2)
-
-#manages textbased user input to use this program
-def get_user_input():
-    global country
-    global sheet
-    global year
-    country = input("Enter ISO3: ").upper()
-    sheet = input("Choose Datasheet (Water/Sanitation/Hygiene): ").capitalize()
-    year = int(input("Select the year (2000-2020): "))
-    if(country == "END" or country == "EXIT"):
-        print("Stopping the program. Seems like it worked!")
-        sys.exit()
-    while(not(countryISO3.__contains__(country))):
-        print("Country ISO3 not recognized. Try one of these countries.")
-        print(countryISO3)
-        country = input("Enter ISO3: ").upper()
-    while(not(sheet == "Water" or sheet == "Sanitation" or sheet == "Hygiene")):
-        if (country == "END" or country == "EXIT"):         #to give an exit option if you cant select sheet
-            print("Stopping the program. Seems like it worked!")
-            sys.exit()
-        print("Datasheet not recognized. Go and try again!")
-        sheet = input("Choose Datasheet (Water/Sanitation/Hygiene): ")
-    while(year<2000 or year>2020):
-        print("Invalid year! Please choose a year between 2000 and 2020.")
-        year = int(input("Select the year (2000-2020): "))
-
-#prints all the data for one country
-def print_single_country_single_year(country ="Madagascar", year = 2020):
-    dfs = dfSanitation
-    dfs = dfs[dfs.iloc[:, 0] == country]
-    dfs = dfs[dfs.iloc[:, 2] == year]
-    print(dfs)
-
-#creates a plot showing one variable for one country over time
-def print_single_variable_of_single_country_over_time(variable ="Population (thousands)", country ="Madagascar"):
-    dfs = dfSanitation
-    xAxis = dfs[dfs.iloc[:, 0] == country]
-    yAxis = xAxis
-    xAxis = xAxis.iloc[:, 2]
-    print("printing xAxis")
-    print(xAxis)
-    print("printing yAxis")
-    print(yAxis)
-    plt.title(country)
-    plt.ylabel(variable)
-    plt.xlabel("Year")
-    plt.xticks(range(2000, 2021))
-    plt.plot(xAxis, yAxis)
-    plt.show()
-
-#creates a plot comparing one variable of one country against the average over time
-def lineplotSingleVariableOverTime(variable ="Population (thousands)", nations =['Madagascar']):
-    averages = getAverageOverTime(variable=variable)
-    frames = [averages]
-    for nation in nations:
-        frames.append(getDataForNation(variable=variable, nation=nation))
-    result = pd.concat(frames)
-    sns.lineplot(data=result, x="year", y=variable, hue="country").set_xticks(range(2000, 2021))
-    plt.show()
-
-def barplotSingleVariableOverTime(variable="Popluation (thousands)", nations=["Madagascar"]):
-    averages = getAverageOverTime(variable=variable)
-    frames = [averages]
-    for nation in nations:
-        frames.append(getDataForNation(variable=variable, nation=nation))
-    result = pd.concat(frames)
-    sns.barplot(data=result, x="year", y=variable, hue="country")
-    plt.show()
-
-def scatterplotDifferentVariables(varX="Population (thousands)", varY="% at least basic national sanitation", nation="Madagascar"):
-    xAxis = getDataForNation(variable=varX, nation=nation)
-    yAxis = getDataForNation(variable=varY, nation=nation)
-    sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0])
-    if(varX=="Year"):
-        plt.xticks(range(2000, 2021))
-    plt.title(nation)
-    plt.show()
-
-def scatterplotThreeVariables(varX="Population (thousands)",
-                              varY="% at least basic national sanitation",
-                              varZ="Sewer connections urban Proportion of population using improved sanitation facilities (including shared)",
-                              nation="Madagascar"):
-    xAxis = getDataForNation(variable=varX, nation=nation)
-    yAxis = getDataForNation(variable=varY, nation=nation)
-    zAxis = getDataForNation(variable=varZ, nation=nation)
-    sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0], size=zAxis.iloc[:, 0])
-    if(varX=="Year"):
-        plt.xticks(range(2000, 2021))
-    plt.title(nation)
-    plt.show()
-
-
 #returns a dataframe containing the average worldwide values per year
-def getAverageOverTime(variable = "Population (thousands)"):
+def get_average_over_time(variable ="Population (thousands)"):
     dfs = dfSanitation
     averages = []
     for year in range(2000, 2021):
@@ -234,7 +136,7 @@ def getAverageOverTime(variable = "Population (thousands)"):
     return dfAverages
 
 #return a dataframe containing the data for a single nation for a single variable over time
-def getDataForNation(variable="Population (thousands)", nation="Madagascar"):
+def get_data_for_nation(variable="Population (thousands)", nation="Madagascar"):
     dfs = dfSanitation
     data = dfs[dfs.iloc[:, 0] == nation]
     data = data.iloc[:, variables_sanitation[variable]]
@@ -263,21 +165,6 @@ def clean_data():
 #pretty much the main function, but havent googled yet on how to do it properly
 def run_program():
     initialize_global_variables()
-    #copy_excel_file()
-    #get_user_input()
-    #print_single_country(year=2005)
-    #print_single_variable_over_time()
-    #lineplotSingleVariableOverTime(nations=["Germany", "Switzerland", "Madagascar", "Russian Federation"], variable="Population (thousands)")
-    #barplotSingleVariableOverTime(nations=["Germany", "Switzerland", "Madagascar", "Russian Federation"], variable="Population (thousands)")
-    #scatterplotDifferentVariables(varX="Year",varY="Sewer connections urban Proportion of population using improved sanitation facilities (including shared)",nation="Madagascar")
-    #scatterplotThreeVariables()
-    #getAverageOverTime()
-    #excel_to_csv()
-    #clean_data()
-    #dfs = dfSanitation
-    #print(type(dfs.iloc[38][6]))
-    d1 = Diagram("Scatter")
-    print(d1.type)
 
 
 run_program()
