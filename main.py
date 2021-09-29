@@ -147,13 +147,13 @@ def get_data_for_nation(variable="Population (thousands)", nation="Madagascar"):
     df.columns = [variable, 'country', 'year']
     return df
 
-#creates csv files from excelfiles
+#creates csv files from excelfiles, shouldnt be needed ever again, didnt delete for completeness
 def excel_to_csv():
     read_file = pd.read_excel('WHS_11_08_2021.xlsx', sheet_name='Sanitation')
     read_file.to_csv(r'C:\Users\schoe\PycharmProjects\testing\Sanitation_12_08_2021.csv', index = None, header=True)
 
 
-#currently cleans water, shouldnt be needed ever again, dont know why i dont just delete this method
+#currently cleans water, shouldnt be needed ever again, didnt delete for completeness
 def clean_data():
     global dfHygiene
     dfHygiene = dfHygiene.replace("<1", "0.1")

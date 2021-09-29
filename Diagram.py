@@ -1,3 +1,5 @@
+import numpy as np
+
 from main import get_data_for_nation
 from main import get_average_over_time
 import pandas as pd
@@ -59,10 +61,10 @@ class Diagram:
         sns.barplot(data=dataframe, x="year", y=variable, hue="country")
         plt.show()
 
-    def scatterplot_different_variables(self,
-                                        varX: str,
-                                        varY: str,
-                                        nations: [str]):
+    def scatterplot_two_variables(self,
+                                  varX: str,
+                                  varY: str,
+                                  nations: [str]):
         xAxis  = Diagram.create_dataframe(self, varX, nations)
         yAxis = Diagram.create_dataframe(self, varY, nations)
         sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0])
@@ -80,4 +82,25 @@ class Diagram:
             plt.xticks(range(2000, 2021))
         plt.title(nations)
         plt.show()
+
+    def create_plot(self, type: Type, variable: [str], nations: [str]):
+        if(type == Type.SCATTER):
+            if(len(variable) == 2 & np.unique(variable) == 2 & len(nations) > 0):
+                Diagram.scatterplot_two_variables(self, variable[0], variable[1], nations)
+            elif(len(variable) == 3 & np.unique(variable) == 3 & len(nations) > 0):
+                Diagram.scatterplot_three_variables(self, variable[0], variable[1], variable[2], nations)
+            else:
+                print("Scatterplots require 2-3 different variables, aswell as at least one country!")
+        elif(type == Type.LINE):
+            if(len(variable == 1) & len(nations) > 0):
+                Diagram.lineplot_single_variable_over_time(self, variable[0], nations)
+            else:
+                print("Lineplots require one variable, aswell as at least one country!")
+        elif(type == Type.BAR):
+            if(len(variable) == 1 & len(nations) > 0):
+                Diagram.barplot_variable_over_time(self, variable[0], nations)
+            else:
+                print("Barplots require one variable, aswell as at least one country!")
+        elif(type == Type.MAP):
+            print("Yeah, I dont really do anything right now. Try some other type of Diagram!")
 
