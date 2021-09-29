@@ -165,6 +165,6 @@ def clean_data():
 #pretty much the main function, but havent googled yet on how to do it properly
 def run_program():
     initialize_global_variables()
-
+    print("hallo")
 
 run_program()
