@@ -1,4 +1,6 @@
 import sys
+import webbrowser
+
 import openpyxl as xl
 import pandas as pd
 import numpy as np
@@ -8,6 +10,8 @@ import dash                            #bokeh for virtualization
 import plotly.express as px
 import math
 import seaborn as sns
+import folium
+from IPython.display import display
 
 from enum import Enum
 class Sheet(Enum):
@@ -160,8 +164,26 @@ def clean_data():
     dfHygiene = dfHygiene.fillna(0)
     dfHygiene.to_csv("Hygiene_28_09_2021.csv")
 
+#for experiments with folium
+def folium_experiments():
+    m = folium.Map(location=[35, 0], zoom_start=2.6)
+    folium.Marker(
+        location=[51.514244, 7.468429],
+        popup='<strong>Dortmund<strong>',
+        tooltip='click for more'
+    ).add_to(m)
+    folium.Circle(
+        location=(51.514244, 7.468429),
+        radius=2000,
+        fill=True
+    ).add_to(m)
+
+    m.save('map.html')
+    webbrowser.open_new('map.html')
+
 #pretty much the main function, but havent googled yet on how to do it properly
 def run_program():
     initialize_global_variables()
+    folium_experiments()
 
 run_program()
