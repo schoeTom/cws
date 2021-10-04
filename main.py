@@ -1,6 +1,5 @@
 import sys
 import webbrowser
-
 import openpyxl as xl
 import pandas as pd
 import numpy as np
@@ -10,8 +9,7 @@ import dash                            #bokeh for virtualization
 import plotly.express as px
 import math
 import seaborn as sns
-import folium
-from IPython.display import display
+import dgrm
 
 from enum import Enum
 class Sheet(Enum):
@@ -25,43 +23,44 @@ def initialize_global_variables():
     #variables_sanitation is a dictionary mapping each variable from the sanitation datasheet to
     #its column index in the datasheet, to have easy integerbased access to the column
     global variables_sanitation
-    variables_sanitation = {"Country":0, "ISO3":1, "Year":2, "Population (thousands)":3,
-                            "% urban population":4, "% at least basic national sanitation":5,
-                            "limited (shared) national sanitation":6, "unimproved national sanitation":7,
-                            "open defecation national sanitation":8, "annual rate of change in basic national sanitation":9,
-                            "annual rate of change in open national defecation":10, "at least basic rural sanitation":11,
-                            "limited (shared) rural sanitation":12, "unimproved rural sanitation":13,
-                            "open defecation rural sanitation":14, "annual rate of change in basic rural sanitation":15,
-                            "annual rate of change in open rural defecation":16, "at least basic urban sanitation":17,
-                            "limited (shared) urban sanitation":18, "unimproved urban sanitation":19,
-                            "open defecation urban sanitation":20, "annual rate of change in basic urban sanitation":21,
-                            "annual rate of change in open urban defecation":22,
-                            "Safely managed national Proportion of population using improved sanitation facilities (excluding shared)":23,
-                            "Disposed in situ national Proportion of population using improved sanitation facilities (excluding shared)":24,
-                            "Emptied and treated national Proportion of population using improved sanitation facilities (excluding shared)":25,
-                            "Wastewater treated national Proportion of population using improved sanitation facilities (excluding shared)":26,
-                            "annual rate of change in safely mangaged national Proportion of population using improved sanitation facilities (excluding shared)":27,
-                            "Latriness and other national Proportion of population using improved sanitation facilities (including shared)":28,
-                            "Septic tanks national Proportion of population using improved sanitation facilities (including shared)":29,
-                            "Sewer connections national Proportion of population using improved sanitation facilities (including shared)":30,
-                            "Safely managed rural Proportion of population using improved sanitation facilities (excluding shared)":31,
-                            "Disposed in situ rural Proportion of population using improved sanitation facilities (excluding shared)":32,
-                            "Emptied and treated rural Proportion of population using improved sanitation facilities (excluding shared)":33,
-                            "Wastewater treated rural Proportion of population using improved sanitation facilities (excluding shared)":34,
-                            "Annual rate of change in safely managed rural Proportion of population using improved sanitation facilities (excluding shared)":35,
-                            "Latriness and other rural Proportion of population using improved sanitation facilities (including shared)":36,
-                            "Septic tanks rural Proportion of population using improved sanitation facilities (including shared)":37,
-                            "Sewer connections rural Proportion of population using improved sanitation facilities (including shared)":38,
-                            "Safely managed urban Proportion of population using improved sanitation facilities (excluding shared)":39,
-                            "Disposed in situ urban Proportion of population using improved sanitation facilities (excluding shared)":40,
-                            "Emptied and treated urban Proportion of population using improved sanitation facilities (excluding shared)":41,
-                            "Wastewater treated urban Proportion of population using improved sanitation facilities (excluding shared)":42,
-                            "Annual rate of change in safely managed urban Proportion of population using improved sanitation facilities (excluding shared)":43,
-                            "Latriness and other urban Proportion of population using improved sanitation facilities (including shared)":44,
-                            "Septic tanks urban Proportion of population using improved sanitation facilities (including shared)":45,
-                            "Sewer connections urban Proportion of population using improved sanitation facilities (including shared)":46,
-                            "SDG region":47, "WHO region":48, "UNICEF Programming region":49, "UNICEF Reporting region":50
-                            }
+    variables_sanitation = {
+        "Country":0, "ISO3":1, "Year":2, "Population (thousands)":3,
+        "% urban population":4, "% at least basic national sanitation":5,
+        "limited (shared) national sanitation":6, "unimproved national sanitation":7,
+        "open defecation national sanitation":8, "annual rate of change in basic national sanitation":9,
+        "annual rate of change in open national defecation":10, "at least basic rural sanitation":11,
+        "limited (shared) rural sanitation":12, "unimproved rural sanitation":13,
+        "open defecation rural sanitation":14, "annual rate of change in basic rural sanitation":15,
+        "annual rate of change in open rural defecation":16, "at least basic urban sanitation":17,
+        "limited (shared) urban sanitation":18, "unimproved urban sanitation":19,
+        "open defecation urban sanitation":20, "annual rate of change in basic urban sanitation":21,
+        "annual rate of change in open urban defecation":22,
+        "Safely managed national Proportion of population using improved sanitation facilities (excluding shared)":23,
+        "Disposed in situ national Proportion of population using improved sanitation facilities (excluding shared)":24,
+        "Emptied and treated national Proportion of population using improved sanitation facilities (excluding shared)":25,
+        "Wastewater treated national Proportion of population using improved sanitation facilities (excluding shared)":26,
+        "annual rate of change in safely mangaged national Proportion of population using improved sanitation facilities (excluding shared)":27,
+        "Latriness and other national Proportion of population using improved sanitation facilities (including shared)":28,
+        "Septic tanks national Proportion of population using improved sanitation facilities (including shared)":29,
+        "Sewer connections national Proportion of population using improved sanitation facilities (including shared)":30,
+        "Safely managed rural Proportion of population using improved sanitation facilities (excluding shared)":31,
+        "Disposed in situ rural Proportion of population using improved sanitation facilities (excluding shared)":32,
+        "Emptied and treated rural Proportion of population using improved sanitation facilities (excluding shared)":33,
+        "Wastewater treated rural Proportion of population using improved sanitation facilities (excluding shared)":34,
+        "Annual rate of change in safely managed rural Proportion of population using improved sanitation facilities (excluding shared)":35,
+        "Latriness and other rural Proportion of population using improved sanitation facilities (including shared)":36,
+        "Septic tanks rural Proportion of population using improved sanitation facilities (including shared)":37,
+        "Sewer connections rural Proportion of population using improved sanitation facilities (including shared)":38,
+        "Safely managed urban Proportion of population using improved sanitation facilities (excluding shared)":39,
+        "Disposed in situ urban Proportion of population using improved sanitation facilities (excluding shared)":40,
+        "Emptied and treated urban Proportion of population using improved sanitation facilities (excluding shared)":41,
+        "Wastewater treated urban Proportion of population using improved sanitation facilities (excluding shared)":42,
+        "Annual rate of change in safely managed urban Proportion of population using improved sanitation facilities (excluding shared)":43,
+        "Latriness and other urban Proportion of population using improved sanitation facilities (including shared)":44,
+        "Septic tanks urban Proportion of population using improved sanitation facilities (including shared)":45,
+        "Sewer connections urban Proportion of population using improved sanitation facilities (including shared)":46,
+        "SDG region":47, "WHO region":48, "UNICEF Programming region":49, "UNICEF Reporting region":50
+    }
 
     # variables_water is a dictionary mapping each variable from the water datasheet to
     # its column index in the datasheet, to have easy integerbased access to the column
@@ -121,34 +120,6 @@ def read_data():
     dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=0, index_col=0)
     dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=0, index_col=0)
 
-#returns a dataframe containing the average worldwide values per year
-def get_average_over_time(variable ="Population (thousands)"):
-    dfs = dfSanitation
-    averages = []
-    for year in range(2000, 2021):
-        tempAverages = dfs[dfs.iloc[:, 2] == year]
-        tempAverages = tempAverages.iloc[:, variables_sanitation[variable]]
-        tempAverages = sum(tempAverages)/len(tempAverages)
-        averages.append(tempAverages)
-    list = ["average" for i in range(0, 21)]
-    dfAverages = pd.DataFrame(data=averages)
-    dfAverages["line"] = list
-    dfAverages["year"] = range(2000, 2021)
-    dfAverages.columns = [variable, 'country', 'year']
-    return dfAverages
-
-#return a dataframe containing the data for a single nation for a single variable over time
-def get_data_for_nation(variable="Population (thousands)", nation="Madagascar"):
-    dfs = dfSanitation
-    data = dfs[dfs.iloc[:, 0] == nation]
-    data = data.iloc[:, variables_sanitation[variable]]
-    list = [nation for i in range(0, 21)]
-    df = pd.DataFrame(data=data)
-    df["country"] = list
-    df["year"] = range(2000, 2021)
-    df.columns = [variable, 'country', 'year']
-    return df
-
 #creates csv files from excelfiles, shouldnt be needed ever again, didnt delete for completeness
 def excel_to_csv():
     read_file = pd.read_excel('WHS_11_08_2021.xlsx', sheet_name='Sanitation')
@@ -164,26 +135,18 @@ def clean_data():
     dfHygiene = dfHygiene.fillna(0)
     dfHygiene.to_csv("Hygiene_28_09_2021.csv")
 
-#for experiments with folium
-def folium_experiments():
-    m = folium.Map(location=[35, 0], zoom_start=2.6)
-    folium.Marker(
-        location=[51.514244, 7.468429],
-        popup='<strong>Dortmund<strong>',
-        tooltip='click for more'
-    ).add_to(m)
-    folium.Circle(
-        location=(51.514244, 7.468429),
-        radius=2000,
-        fill=True
-    ).add_to(m)
-
-    m.save('map.html')
-    webbrowser.open_new('map.html')
-
 #pretty much the main function, but havent googled yet on how to do it properly
 def run_program():
     initialize_global_variables()
-    folium_experiments()
+    diag = dgrm.Diagram(
+        type=dgrm.Type.MAP,
+        df_s=dfSanitation,
+        df_w=dfWater,
+        df_h=dfHygiene,
+        var_s=variables_sanitation,
+        var_w=variables_water,
+        var_h=variables_hygiene
+    )
+    dgrm.Diagram.folium_experiments(diag)
 
 run_program()
