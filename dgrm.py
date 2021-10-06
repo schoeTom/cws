@@ -1,3 +1,4 @@
+import json
 import webbrowser
 import numpy as np
 import pandas as pd
@@ -158,25 +159,9 @@ class Diagram:
     # for experiments with folium
     def folium_experiments(self):
         data = self.get_world_data()
-        m = folium.Map(location=[35, 0], zoom_start=2.6, control_scale=True)
-        folium.Marker(
-            location=[51.514244, 7.468429],
-            popup='<strong>Dortmund</strong>',
-            tooltip='click for more'
-        ).add_to(m)
-        folium.Circle(
-            location=(51.514244, 7.468429),
-            radius=2000,
-            fill=True
-        ).add_to(m)
-        plugins.Fullscreen(position='topright').add_to(m)
-        url = 'https://raw.githubusercontent.com/python-visualization/folium/master/examples/data'
-        country_shapes = f'{url}/world-countries.json'
-        folium.Choropleth(
-            geo_data=country_shapes,
-            name="Experiments",
-            data=data
-        ).add_to(m)
+        world_geo = json.load(open('world-countries.json'))
+        m = folium.Map(location=[35, 0], zoom_start=2.6)
+        folium.GeoJson(world_geo).add_to(m)
 
         m.save('map.html')
         webbrowser.open_new('map.html')
