@@ -10,6 +10,7 @@ import plotly.express as px
 import math
 import seaborn as sns
 import dgrm
+import Drop_down
 
 from enum import Enum
 class Sheet(Enum):
@@ -147,6 +148,7 @@ def run_program():
         var_w=variables_water,
         var_h=variables_hygiene
     )
-    dgrm.Diagram.folium_experiments(diag)
+    #dgrm.Diagram.folium_experiments(diag)
+    Drop_down.show_gui()       #this is an example of a call from the dropdown file
 
 run_program()

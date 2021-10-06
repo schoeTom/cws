@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import folium
 from folium import plugins
-import geopandas
 
 from enum import Enum
 class Type(Enum):
