@@ -55,23 +55,25 @@ class Diagram:
         else:
             print("ERROR: variable not found!")
         data = df[df.iloc[:, 0] == nation]
-        if self.variables_water[variable]:
+        if variable in self.variables_water:
             data = data.iloc[:, self.variables_water[variable]]
-        elif self.variables_hygiene[variable]:
+        elif variable in self.variables_hygiene:
             data = data.iloc[:, self.variables_hygiene[variable]]
-        elif self.variables_sanitation[variable]:
+        elif variable in self.variables_hygiene:
             data = data.iloc[:, self.variables_sanitation[variable]]
         else:
             print("ERROR: variable not found!")
 
         list = [nation for i in range(0, 21)]
-        result = pd.DataFrame(data=data)
+        result = pd.DataFrame(data=data, columns=[variable])
+        print(result)
         result["country"] = list
+        print(result)
         result["year"] = range(2000, 2021)
-        result.columns = [variable, 'country', 'year']
+        print(result)
         return result
 
-    def get_world_data(self, variable="Population (thousands)"):
+    def get_world_data(self, variable="Population (thousands)", year=2020):
         countries = self.dfSanitation.iloc[:, 0].unique().tolist()
         result = self.create_dataframe(variable=variable, nations=countries)
         return result
@@ -157,11 +159,18 @@ class Diagram:
             Diagram.folium_experiments(self)
 
     # for experiments with folium
-    def folium_experiments(self):
-        data = self.get_world_data()
+    def folium_experiments(self, variable='Population (thousands)'):
+        data = self.get_world_data(variable)
         world_geo = json.load(open('world-countries.json'))
         m = folium.Map(location=[35, 0], zoom_start=2.6)
         folium.GeoJson(world_geo).add_to(m)
+        folium.Choropleth(
+            geo_data=world_geo,
+            data=data,
+            columns=[variable, 'country'],
+            key_on='feature.properties.NAME',
+            fill_color='YlOrRd'
+        )
 
         m.save('map.html')
         webbrowser.open_new('map.html')
