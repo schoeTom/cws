@@ -55,21 +55,18 @@ class Diagram:
             print("ERROR: variable not found!")
         data = df[df.iloc[:, 0] == nation]
         if variable in self.variables_water:
-            data = data.iloc[:, self.variables_water[variable]]
+            data = data[data.iloc[:, self.variables_water[variable]]]
         elif variable in self.variables_hygiene:
-            data = data.iloc[:, self.variables_hygiene[variable]]
+            data = data[data.iloc[:, self.variables_hygiene[variable]]]
         elif variable in self.variables_hygiene:
-            data = data.iloc[:, self.variables_sanitation[variable]]
+            data = data[data.iloc[:, self.variables_sanitation[variable]]]
         else:
             print("ERROR: variable not found!")
 
         list = [nation for i in range(0, 21)]
-        result = pd.DataFrame(data=data, columns=[variable])
-        print(result)
+        result = data
         result["country"] = list
-        print(result)
         result["year"] = range(2000, 2021)
-        print(result)
         return result
 
     def get_world_data(self, variable="Population (thousands)", year=2020):
