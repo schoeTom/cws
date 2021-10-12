@@ -55,23 +55,25 @@ class Diagram:
             print("ERROR: variable not found!")
         data = df[df.iloc[:, 0] == nation]
         if variable in self.variables_water:
-            data = data[data.iloc[:, self.variables_water[variable]]]
+            data = data.iloc[:, self.variables_water[variable]]
         elif variable in self.variables_hygiene:
-            data = data[data.iloc[:, self.variables_hygiene[variable]]]
+            data = data.iloc[:, self.variables_hygiene[variable]]
         elif variable in self.variables_hygiene:
-            data = data[data.iloc[:, self.variables_sanitation[variable]]]
+            data = data.iloc[:, self.variables_sanitation[variable]]
         else:
             print("ERROR: variable not found!")
 
         list = [nation for i in range(0, 21)]
-        result = data
+        result = pd.DataFrame(data)
         result["country"] = list
         result["year"] = range(2000, 2021)
+        result.columns = [variable, "country", "year"]
         return result
 
     def get_world_data(self, variable="Population (thousands)", year=2020):
         countries = self.dfSanitation.iloc[:, 0].unique().tolist()
-        result = self.create_dataframe(variable=variable, nations=countries)
+        df = self.create_dataframe(variable=variable, nations=countries)
+        result = df[df.iloc[:, 2] == year]
         return result
 
     # creates a plot showing one variable for one country over time

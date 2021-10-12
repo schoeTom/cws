@@ -117,9 +117,9 @@ def read_data():
     global dfWater
     global dfSanitation
     global dfHygiene
-    dfWater = pd.read_csv("Water_28_09_2021.csv", header=0, index_col=0)
-    dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=0, index_col=0)
-    dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=0, index_col=0)
+    dfWater = pd.read_csv("Water_28_09_2021.csv", header=None)
+    dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=None)
+    dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=None)
 
 #creates csv files from excelfiles, shouldnt be needed ever again, didnt delete for completeness
 def excel_to_csv():
