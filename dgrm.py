@@ -1,4 +1,5 @@
 import json
+import geojson
 import webbrowser
 import numpy as np
 import pandas as pd
@@ -159,20 +160,19 @@ class Diagram:
     # for experiments with folium
     def folium_experiments(self, variable='Population (thousands)'):
         data = self.get_world_data(variable)
-        world_geo = json.load(open('world-countries.json'))
+        world_geo = geojson.load(open('countries.geojson'))
         #url = ('https://github.com/python-visualization/folium/tree/master/examples/data')
         #world_geo = f"{url}/world-counties.json"
         m = folium.Map(location=[35, 0], zoom_start=2.6)
-        #folium.GeoJson(world_geo).add_to(m)
         folium.Choropleth(
             geo_data=world_geo,
             data=data,
             columns=[variable, 'country'],
             key_on='feature.properties.name',
             fill_color='YlOrRd',
-            name="Choropleth",
+            name="choropleth",
             legend_name=variable
-        )
+        ).add_to(m)
 
         m.save('map.html')
         webbrowser.open_new('map.html')
