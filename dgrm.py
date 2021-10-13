@@ -160,14 +160,18 @@ class Diagram:
     def folium_experiments(self, variable='Population (thousands)'):
         data = self.get_world_data(variable)
         world_geo = json.load(open('world-countries.json'))
+        #url = ('https://github.com/python-visualization/folium/tree/master/examples/data')
+        #world_geo = f"{url}/world-counties.json"
         m = folium.Map(location=[35, 0], zoom_start=2.6)
-        folium.GeoJson(world_geo).add_to(m)
+        #folium.GeoJson(world_geo).add_to(m)
         folium.Choropleth(
             geo_data=world_geo,
             data=data,
             columns=[variable, 'country'],
-            key_on='feature.properties.NAME',
-            fill_color='YlOrRd'
+            key_on='feature.properties.name',
+            fill_color='YlOrRd',
+            name="Choropleth",
+            legend_name=variable
         )
 
         m.save('map.html')
