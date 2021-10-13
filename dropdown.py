@@ -7,10 +7,10 @@ root.iconbitmap('427112.png')
 root.geometry("500x400")
 
 # Creating the first list of Variables
-Variable1 ="variables_sanitation"
+Variable1 ='variables_sanitation'
 
 # Create second list of Variables
-Variable2 ="variables_sanitation"
+Variable2 ='variables_sanitation'
 
 def pick_variable(e):
 	if my_combo.get() == "Country":
