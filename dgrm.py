@@ -172,3 +172,4 @@ class Diagram:
 
         m.save('map.html')
         webbrowser.open_new('map.html')
+
