@@ -156,7 +156,7 @@ def run_program():
         var_w=variables_water,
         var_h=variables_hygiene
     )
-    dropdown.load_variables(variables_sanitation, variables_water, variables_hygiene, dfSanitation)
+    #dropdown.load_variables(variables_sanitation, variables_water, variables_hygiene, dfSanitation)
     dgrm.Diagram.folium_experiments(diag)
     # Drop_down.show_gui()       #this is an example of a call from the dropdown file
 

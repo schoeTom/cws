@@ -166,12 +166,12 @@ class Diagram:
         m = folium.Map(location=[35, 0], zoom_start=2.6)
         folium.Choropleth(
             geo_data=world_geo,
-            data=data,
-            columns=[variable, 'country'],
-            key_on='feature.properties.name',
-            fill_color='YlOrRd',
+            #data=data,
+            #columns=[variable, 'country'],
+            #key_on='feature.properties.name',
+            #fill_color='YlOrRd',
             name="choropleth",
-            legend_name=variable
+            #legend_name=variable
         ).add_to(m)
 
         m.save('map.html')
