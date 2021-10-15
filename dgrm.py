@@ -53,6 +53,7 @@ class Diagram:
         dfAverages.columns = [variable, 'country', 'year']
         return dfAverages
 
+    # returns the iso of a single country
     def get_iso(self, country):
         df = self.dfSanitation.iloc[:, 0:2]
         iso = ""
@@ -192,7 +193,7 @@ class Diagram:
         folium.Choropleth(
             geo_data=world_geo,
             data=data,
-            columns=[variable, 'country'],
+            columns=[variable, 'country', 'ISO_A3'],
             key_on='feature.properties.ISO_A3',
             fill_color='YlOrRd',
             name="choropleth",
