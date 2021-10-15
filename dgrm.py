@@ -1,4 +1,3 @@
-import json
 import geojson
 import webbrowser
 import numpy as np
@@ -6,9 +5,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import folium
-from folium import plugins
 
 from enum import Enum
+import webbrowser
+from enum import Enum
+
+import folium
+import geojson
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+
 class Type(Enum):
     SCATTER = 0
     BAR = 1

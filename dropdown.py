@@ -48,7 +48,13 @@ def pick_variable():
 		Variable1_combo.current(0)
 	list_Variable1()
 
+#insert country selection
 
+	master = Tk()
+	var1 = IntVar()
+	Checkbutton(master, text=countries, variable=var1).grid(row=0, sticky=W)
+	mainloop()
+	pick_variable()
 
 def combo_box():
 	#  Combo box
@@ -69,6 +75,11 @@ def combo_box():
 	my_list1.grid(row=0, column=0)
 	my_list2.grid(row=1, column=0)
 	#insert country selection
+
+	master = Tk()
+	var1 = IntVar()
+	Checkbutton(master, text=countries, variable=var1).grid(row=0, sticky=W)
+	mainloop()
 	pick_variable()
 
 def list_Variable1():
