@@ -49,7 +49,7 @@ def pick_variable():
 	list_Variable1()
 
 #insert country selection
-	for key in variables_sanitation[0].keys():
+	for key in countries.keys():
 		var1.append(key)
 	master = Tk()
 	var1 = IntVar()
