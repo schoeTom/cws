@@ -53,6 +53,17 @@ class Diagram:
         dfAverages.columns = [variable, 'country', 'year']
         return dfAverages
 
+    def get_iso(self, country):
+        df = self.dfSanitation.iloc[:, 0:2]
+        iso = ""
+        index = 0
+        while iso == "":
+            if df.iloc[index, 0] == country:
+                iso = df.iloc[index, 1]
+            index = index+1
+        return iso
+
+
     # return a dataframe containing the data for a single nation for a single variable over time
     def get_data_for_nation(self, variable="Population (thousands)", nation="Madagascar"):
         if self.variables_water[variable]:
@@ -73,11 +84,14 @@ class Diagram:
         else:
             print("ERROR: variable not found!")
 
-        list = [nation for i in range(0, 21)]
+        list_countries = [nation for i in range(0, 21)]
+        iso = self.get_iso(nation)
+        list_iso = [iso for i in range(0, 21)]
         result = pd.DataFrame(data)
-        result["country"] = list
+        result["country"] = list_countries
         result["year"] = range(2000, 2021)
-        result.columns = [variable, "country", "year"]
+        result["ISO_A3"] = list_iso
+        result.columns = [variable, "country", "year", "ISO_A3"]
         return result
 
     def get_world_data(self, variable="Population (thousands)", year=2020):
@@ -169,20 +183,23 @@ class Diagram:
     # for experiments with folium
     def folium_experiments(self, variable='Population (thousands)'):
         data = self.get_world_data(variable)
+        #data = data.to_numpy()
         world_geo = geojson.load(open('countries.geojson'))
         #url = ('https://github.com/python-visualization/folium/tree/master/examples/data')
         #world_geo = f"{url}/world-counties.json"
+        print(type(data))
         m = folium.Map(location=[35, 0], zoom_start=2.6)
         folium.Choropleth(
             geo_data=world_geo,
-            #data=data,
-            #columns=[variable, 'country'],
-            #key_on='feature.properties.name',
-            #fill_color='YlOrRd',
+            data=data,
+            columns=[variable, 'country'],
+            key_on='feature.properties.ISO_A3',
+            fill_color='YlOrRd',
             name="choropleth",
-            #legend_name=variable
+            legend_name=variable
         ).add_to(m)
 
+        print("I created a map!")
         m.save('map.html')
         webbrowser.open_new('map.html')
 
