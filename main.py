@@ -158,7 +158,6 @@ def run_program():
     )
     #uncomment the line below if you want to see the gui
     #dropdown.load_variables(variables_sanitation, variables_water, variables_hygiene, dfSanitation)
-
     #uncomment the line below if you want to see the map
     dgrm.Diagram.folium_experiments(diag)
     # Drop_down.show_gui()       #this is an example of a call from the dropdown file

@@ -1,8 +1,9 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
+from tkinter.scrolledtext import ScrolledText
 
-root = Tk()
+root = tk.Tk()
 root.title('Water/Sanitation/Hygiene')
 #root.iconbitmap(tk.PhotoImage(file='427112.png'))
 root.iconphoto(False, tk.PhotoImage(file="427112.png"))
@@ -48,12 +49,13 @@ def pick_variable():
 		Variable1_combo.current(0)
 	list_Variable1()
 
-#insert country selection
-	for key in countries.keys():
-		var1.append(key)
+	#insert country selection
+	#for key in countries.keys():
+	#	var1.append(key)
 	master = Tk()
 	var1 = IntVar()
-	Checkbutton(master, text=countries, variable=var1).grid(row=0, sticky=W)
+	#Checkbutton(master, text=countries, variable=var1).grid(row=0, sticky=W)
+
 	mainloop()
 	pick_variable()
 
@@ -77,11 +79,27 @@ def combo_box():
 	my_list2.grid(row=1, column=0)
 	#insert country selection
 
-	#master = Tk()
-	#var1 = IntVar()
+	master = Tk()
+	var1 = IntVar()
 	#Checkbutton(master, text=countries, variable=var1).grid(row=0, sticky=W)
-	#mainloop()
-	#pick_variable()
+
+	scrollbar = Scrollbar(root)
+	scrollbar.pack(side=RIGHT, fill=Y)
+	list_checkbuttons = list()
+	index = 0
+	for country in countries:
+		button = tk.Checkbutton(master, text=country, variable=var1, anchor='w').grid(row=index, sticky=W)
+		list_checkbuttons.append(button)
+		index = index+1
+		#text.window_create('end', window = button)
+		#text.insert('end', '\n')
+	scrollbar = ttk.Scrollbar(
+		root,
+		orient='vertical'
+	)
+	scrollbar.grid(row=0, column=1, sticky='ns')
+	mainloop()
+	pick_variable()
 
 def list_Variable1():
 	#my_list2.delete(0, END)
