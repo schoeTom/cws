@@ -127,6 +127,38 @@ def read_data():
     dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=None)
     dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=None)
 
+def get_user_input(diag):
+    type = ""
+    while type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
+        type = input("Select the type of diagram you want to create. Available are scatterplot, barplot, lineplot and map:").lower()
+        if type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
+            print("Error: Unrecognized type!")
+    variables = list
+    if type == "scatterplot":
+        count = input("Please choose whether you want two or three variables. The third one would determine the size of each individual point.")
+        variables.append(input("Please choose the first variable for the x axis!"))
+        variables.append(input("Please choose the second variable for the y axis!"))
+        if count == 3 or count == "3":
+            variables.append(input("Please choose the third variable for the size!"))
+    elif type == "barplot" or type == "lineplot":
+        variables.append(input("Please choose the first variable for the x axis!"))
+        variables.append(input("Please choose the second variable for the y axis!"))
+    elif type == "map":
+        variables.append(input("Please choose the variable!"))
+        year = input("Please choose the year (2000-2020)!")
+        diag.create_plot(variables[0], year)
+    nations = []
+    if type != "map":
+        while nations.__sizeof__() == 0 or nations[-1] != "finished":
+            nations.append(input("Please select a country you want to add. Type 'finished' when you are finished."))
+        if type == "scatterplot":
+            diag.create_plot(dgrm.Type.SCATTER, variables, nations)
+        elif type == "barplot":
+            diag.create_plot(dgrm.Type.BAR, variables, nations)
+        elif type == "lineplot":
+            diag.create_plot(dgrm.Type.LINE, variables, nations)
+
+
 
 # creates csv files from excelfiles, shouldnt be needed ever again, didnt delete for completeness
 def excel_to_csv():
@@ -156,11 +188,8 @@ def run_program():
         var_w=variables_water,
         var_h=variables_hygiene
     )
-    #uncomment the line below if you want to see the gui
-    #dropdown.load_variables(variables_sanitation, variables_water, variables_hygiene, dfSanitation)
-    #uncomment the line below if you want to see the map
+    get_user_input(diag)
     dgrm.Diagram.folium_experiments(diag)
-    # Drop_down.show_gui()       #this is an example of a call from the dropdown file
 
 print('hello')
 run_program()

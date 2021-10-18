@@ -160,7 +160,7 @@ class Diagram:
         plt.title(nations)
         plt.show()
 
-    def create_plot(self, type: Type, variable: [str], nations: [str]):
+    def create_plot(self, type: Type, variable: [str], nations: [str], year = 2000):
         if type == Type.SCATTER:
             if len(variable) == 2 & np.unique(variable) == 2 & len(nations) > 0:
                 Diagram.scatterplot_two_variables(self, variable[0], variable[1], nations)
@@ -179,24 +179,23 @@ class Diagram:
             else:
                 print("Barplots require one variable, aswell as at least one country!")
         elif type == Type.MAP:
-            Diagram.folium_experiments(self)
+            Diagram.folium_experiments(self, year)
 
     # for experiments with folium
-    def folium_experiments(self, variable='Population (thousands)'):
-        data = self.get_world_data(variable)
+    def folium_experiments(self, variable='% urban population', year=2000):
+        data = self.get_world_data(variable, year)
         #data = data.to_numpy()
         world_geo = geojson.load(open('countries.geojson'))
         #url = ('https://github.com/python-visualization/folium/tree/master/examples/data')
         #world_geo = f"{url}/world-counties.json"
-        print(type(data))
         m = folium.Map(location=[35, 0], zoom_start=2.6)
         folium.Choropleth(
             geo_data=world_geo,
+            name="choropleth",
             data=data,
-            columns=[variable, 'country', 'ISO_A3'],
+            columns=["ISO_A3", variable],
             key_on='feature.properties.ISO_A3',
             fill_color='YlOrRd',
-            name="choropleth",
             legend_name=variable
         ).add_to(m)
 
