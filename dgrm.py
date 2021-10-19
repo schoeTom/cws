@@ -160,6 +160,9 @@ class Diagram:
         plt.title(nations)
         plt.show()
 
+    # this function is called only from the main file to create the diagram.
+    # every information needed to create any diagram is given with the parameters
+    # this function also checks if the given parameters fit in the requested diagram
     def create_plot(self, type: Type, variable: [str], nations: [str], year = 2000):
         if type == Type.SCATTER:
             if len(variable) == 2 & np.unique(variable) == 2 & len(nations) > 0:
@@ -179,15 +182,16 @@ class Diagram:
             else:
                 print("Barplots require one variable, aswell as at least one country!")
         elif type == Type.MAP:
-            Diagram.folium_experiments(self, year)
+            if len(variable) == 1 and year >= 2000 and year <= 2020 and len(nations) == 1:
+                Diagram.create_map(self, variable, year)
+            else:
+                print("Maps require one country, one variable and a year from 2000-2020!")
 
-    # for experiments with folium
-    def folium_experiments(self, variable='% urban population', year=2000):
+    # creates a Choropleth map for the given variable and year
+    # maps is saved before it's shown in a new browser window
+    def create_map(self, variable='% urban population', year=2000):
         data = self.get_world_data(variable, year)
-        #data = data.to_numpy()
         world_geo = geojson.load(open('countries.geojson'))
-        #url = ('https://github.com/python-visualization/folium/tree/master/examples/data')
-        #world_geo = f"{url}/world-counties.json"
         m = folium.Map(location=[35, 0], zoom_start=2.6)
         folium.Choropleth(
             geo_data=world_geo,
@@ -198,8 +202,6 @@ class Diagram:
             fill_color='YlOrRd',
             legend_name=variable
         ).add_to(m)
-
-        print("I created a map!")
         m.save('map.html')
         webbrowser.open_new('map.html')
 
