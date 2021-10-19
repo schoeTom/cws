@@ -115,7 +115,8 @@ def read_data():
 
 # prints every country
 def print_nations():
-    print(dfSanitation.iloc[:, 0].unique().tolist())
+    for country in dfSanitation.iloc[:, 0].unique().tolist():
+        print(country)
     print("Just type any country that you want. Make sure it's spelled correctly.")
 
 # prints every variable from every sheet
@@ -133,7 +134,6 @@ def print_variables():
 
 # responsible for the CLI so that the user can select all the variables for a diagram
 def get_user_input(diag):
-    print_nations()
     print_variables()
     type = ""
     while type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
@@ -142,22 +142,28 @@ def get_user_input(diag):
             print("Error: Unrecognized type!")
     variables = []
     if type == "scatterplot":
-        count = input("Please choose whether you want two or three variables. The third one would determine the size of each individual point:")
+        sum = input("Please choose whether you want two or three variables. The third one would determine the size of each individual point:")
         variables.append(input("Please choose the first variable for the x axis:"))
         variables.append(input("Please choose the second variable for the y axis:"))
-        if count == 3 or count == "3":
+        if sum == 3 or sum == "3":
             variables.append(input("Please choose the third variable for the size:"))
     elif type == "barplot" or type == "lineplot":
-        variables.append(input("Please choose the first variable for the x axis:"))
         variables.append(input("Please choose the second variable for the y axis:"))
     elif type == "map":
         variables.append(input("Please choose the variable:"))
         year = input("Please choose the year (2000-2020):")
         diag.create_plot(dgrm.Type.MAP, variable=variables[0], nations=[], year=year)
     nations = []
+    print_nations()
     if type != "map":
-        while nations.__sizeof__() == 0 or nations[-1] != "finished":
-            nations.append(str(input("Please select a country you want to add. Type 'finished' when you are finished:")))
+        finished = False
+        while not finished:
+            if len(nations) > 0:
+                if nations[-1] == "finished":
+                    finished = True
+                    nations.remove("finished")
+            if not finished:
+                nations.append(str(input("Please select a country you want to add. Type 'average' for the worldwide average. Type 'finished' when you are finished:")))
         if type == "scatterplot":
             diag.create_plot(dgrm.Type.SCATTER, variables, nations)
         elif type == "barplot":

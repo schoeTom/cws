@@ -67,11 +67,11 @@ class Diagram:
 
     # return a dataframe containing the data for a single nation for a single variable over time
     def get_data_for_nation(self, variable="Population (thousands)", nation="Madagascar"):
-        if self.variables_water[variable]:
+        if variable in self.variables_water:
             df = self.dfWater
-        elif self.variables_hygiene[variable]:
+        elif variable in self.variables_hygiene:
             df = self.dfHygiene
-        elif self.variables_sanitation[variable]:
+        elif variable in self.variables_sanitation:
             df = self.dfSanitation
         else:
             print("ERROR: variable not found!")
@@ -125,11 +125,10 @@ class Diagram:
         result = pd.concat(dataframes)
         return result
 
-
     # creates a plot comparing one variable of one country against the average over time
-    def lineplot_single_variable_over_time(self, variable: str, nations: [str]):
+    def lineplot_single_variable_over_time(self, variable, nations: [str]):
         dataframe = Diagram.create_dataframe(self, variable, nations)
-        sns.lineplot(data=dataframe, x="year", y=variable, hue="country").set_xticks(range(2000, 2021))
+        sns.lineplot(data=dataframe, x="year", y=variable, hue="country")
         plt.show()
 
     # creates a barplot of a single variable on y-Axis and years on x-Axis
@@ -163,22 +162,22 @@ class Diagram:
     # this function is called only from the main file to create the diagram.
     # every information needed to create any diagram is given with the parameters
     # this function also checks if the given parameters fit in the requested diagram
-    def create_plot(self, type: Type, variable, nations: [str], year):
+    def create_plot(self, type: Type, variable, nations: [str], year=2000):
         if type == Type.SCATTER:
-            if len(variable) == 2 & np.unique(variable) == 2 & len(nations) > 0:
+            if len(variable) == 2 and len(nations) > 0:
                 Diagram.scatterplot_two_variables(self, variable[0], variable[1], nations)
-            elif len(variable) == 3 & np.unique(variable) == 3 & len(nations) > 0:
+            elif len(variable) == 3 and np.unique(variable) == 3 and len(nations) > 0:
                 Diagram.scatterplot_three_variables(self, variable[0], variable[1], variable[2], nations)
             else:
                 print("Scatterplots require 2-3 different variables, aswell as at least one country!")
         elif type == Type.LINE:
-            if len(variable == 1) & len(nations) > 0:
-                Diagram.lineplot_single_variable_over_time(self, variable[0], nations)
+            if len(variable) == 1 and len(nations) > 0:
+                Diagram.lineplot_single_variable_over_time(self, variable=variable[0], nations=nations)
             else:
                 print("Lineplots require one variable, aswell as at least one country!")
         elif type == Type.BAR:
-            if len(variable) == 1 & len(nations) > 0:
-                Diagram.barplot_variable_over_time(self, variable[0], nations)
+            if len(variable) == 1 and len(nations) > 0:
+                Diagram.barplot_variable_over_time(self, variable=variable[0], nations=nations)
             else:
                 print("Barplots require one variable, aswell as at least one country!")
         elif type == Type.MAP:
