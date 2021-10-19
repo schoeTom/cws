@@ -163,7 +163,7 @@ class Diagram:
     # this function is called only from the main file to create the diagram.
     # every information needed to create any diagram is given with the parameters
     # this function also checks if the given parameters fit in the requested diagram
-    def create_plot(self, type: Type, variable: [str], nations: [str], year = 2000):
+    def create_plot(self, type: Type, variable, nations: [str], year):
         if type == Type.SCATTER:
             if len(variable) == 2 & np.unique(variable) == 2 & len(nations) > 0:
                 Diagram.scatterplot_two_variables(self, variable[0], variable[1], nations)
@@ -182,10 +182,11 @@ class Diagram:
             else:
                 print("Barplots require one variable, aswell as at least one country!")
         elif type == Type.MAP:
-            if len(variable) == 1 and year >= 2000 and year <= 2020 and len(nations) == 1:
+            year = int(year)
+            if year >= 2000 and year <= 2020 and len(nations) == 0:
                 Diagram.create_map(self, variable, year)
             else:
-                print("Maps require one country, one variable and a year from 2000-2020!")
+                print("Maps require one variable and a year from 2000-2020!")
 
     # creates a Choropleth map for the given variable and year
     # maps is saved before it's shown in a new browser window

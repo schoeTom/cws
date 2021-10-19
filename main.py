@@ -113,13 +113,34 @@ def read_data():
     dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=None)
     dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=None)
 
+# prints every country
+def print_nations():
+    print(dfSanitation.iloc[:, 0].unique().tolist())
+    print("Just type any country that you want. Make sure it's spelled correctly.")
+
+# prints every variable from every sheet
+def print_variables():
+    print("Variables from the sanitation sheet:")
+    for key in variables_sanitation.keys():
+        print(key)
+    print("Variables from the water sheet:")
+    for key in variables_water.keys():
+        print(key)
+    print("Variables from the hygiene sheet:")
+    for key in variables_hygiene.keys():
+        print(key)
+    print("Just type any variable that you want. You don't have to specify the sheet it's from. Make sure it's spelled correctly.")
+
+# responsible for the CLI so that the user can select all the variables for a diagram
 def get_user_input(diag):
+    print_nations()
+    print_variables()
     type = ""
     while type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
         type = input("Select the type of diagram you want to create. Available are scatterplot, barplot, lineplot and map:").lower()
         if type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
             print("Error: Unrecognized type!")
-    variables = list
+    variables = []
     if type == "scatterplot":
         count = input("Please choose whether you want two or three variables. The third one would determine the size of each individual point:")
         variables.append(input("Please choose the first variable for the x axis:"))
@@ -132,11 +153,11 @@ def get_user_input(diag):
     elif type == "map":
         variables.append(input("Please choose the variable:"))
         year = input("Please choose the year (2000-2020):")
-        diag.create_plot(dgrm.Type.MAP, variables[0], year)
+        diag.create_plot(dgrm.Type.MAP, variable=variables[0], nations=[], year=year)
     nations = []
     if type != "map":
         while nations.__sizeof__() == 0 or nations[-1] != "finished":
-            nations.append(input("Please select a country you want to add. Type 'finished' when you are finished:"))
+            nations.append(str(input("Please select a country you want to add. Type 'finished' when you are finished:")))
         if type == "scatterplot":
             diag.create_plot(dgrm.Type.SCATTER, variables, nations)
         elif type == "barplot":
@@ -174,8 +195,8 @@ def run_program():
         var_w=variables_water,
         var_h=variables_hygiene
     )
-    #get_user_input(diag)
-    dgrm.Diagram.create_map(diag)
+    get_user_input(diag)
+    #dgrm.Diagram.create_map(diag)
 
 print('hello')
 run_program()
