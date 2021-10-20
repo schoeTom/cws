@@ -135,6 +135,7 @@ class Diagram:
     def lineplot_single_variable_over_time(self, variable, nations: [str]):
         dataframe = Diagram.create_dataframe(self, variable, nations)
         sns.lineplot(data=dataframe, x="year", y=variable, hue="country")
+        plt.xticks(range(2000, 2021))
         plt.show()
 
     # creates a barplot of a single variable on y-Axis and years on x-Axis
