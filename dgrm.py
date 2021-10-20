@@ -30,10 +30,17 @@ class Diagram:
 
     # returns a dataframe containing the average worldwide values per year
     def get_average_over_time(self, variable="Population (thousands)"):
-        dfs = self.dfSanitation
+        if variable in self.variables_water:
+            df = self.dfWater
+        elif variable in self.variables_hygiene:
+            df = self.dfHygiene
+        elif variable in self.variables_sanitation:
+            df = self.dfSanitation
+        else:
+            print("ERROR: variable not found!")
         averages = []
         for year in range(2000, 2021):
-            tempAverages = dfs[dfs.iloc[:, 2] == year]
+            tempAverages = df[df.iloc[:, 2] == year]
             tempAverages = tempAverages.iloc[:, self.variables_sanitation[variable]]
             tempAverages = sum(tempAverages) / len(tempAverages)
             averages.append(tempAverages)
@@ -174,6 +181,7 @@ class Diagram:
         elif type == Type.MAP:
             year = int(year)
             if year >= 2000 and year <= 2020 and len(nations) == 0:
+                print("Creating map. This might take a moment.")
                 Diagram.create_map(self, variable, year)
             else:
                 print("Maps require one variable and a year from 2000-2020!")
@@ -183,6 +191,10 @@ class Diagram:
     def create_map(self, variable='% urban population', year=2000):
         data = self.get_world_data(variable, year)
         world_geo = geojson.load(open('countries.geojson'))
+        color1 = 'YlOrRd'
+        color2 = 'YlGn'
+        color3 = 'BuPu'     # TODO: delete unused colors
+        color4 = 'YlOrBr'   # my current favourite for a colorscheme
         m = folium.Map(location=[35, 0], zoom_start=2.6)
         folium.Choropleth(
             geo_data=world_geo,
@@ -190,7 +202,7 @@ class Diagram:
             data=data,
             columns=["ISO_A3", variable],
             key_on='feature.properties.ISO_A3',
-            fill_color='YlOrRd',
+            fill_color=color4,
             legend_name=variable
         ).add_to(m)
         m.save('map.html')
