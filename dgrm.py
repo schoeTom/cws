@@ -1,12 +1,3 @@
-import geojson
-import webbrowser
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import folium
-
-from enum import Enum
 import webbrowser
 from enum import Enum
 
