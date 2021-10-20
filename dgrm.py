@@ -30,18 +30,24 @@ class Diagram:
 
     # returns a dataframe containing the average worldwide values per year
     def get_average_over_time(self, variable="Population (thousands)"):
+        index = -1
         if variable in self.variables_water:
             df = self.dfWater
+            index = self.variables_water[variable]
         elif variable in self.variables_hygiene:
             df = self.dfHygiene
+            index = self.variables_hygiene[variable]
         elif variable in self.variables_sanitation:
             df = self.dfSanitation
+            index = self.variables_sanitation[variable]
         else:
             print("ERROR: variable not found!")
+        if index == -1:
+            print("ERROR: variables index out of bound.")
         averages = []
         for year in range(2000, 2021):
             tempAverages = df[df.iloc[:, 2] == year]
-            tempAverages = tempAverages.iloc[:, self.variables_sanitation[variable]]
+            tempAverages = tempAverages.iloc[:, index]
             tempAverages = sum(tempAverages) / len(tempAverages)
             averages.append(tempAverages)
         list = ["average" for i in range(0, 21)]
@@ -93,6 +99,8 @@ class Diagram:
         result.columns = [variable, "country", "year", "ISO_A3"]
         return result
 
+    # returns all the data from every country for a specific variable and year
+    # needed for the data for maps
     def get_world_data(self, variable="Population (thousands)", year=2020):
         countries = self.dfSanitation.iloc[:, 0].unique().tolist()
         df = self.create_dataframe(variable=variable, nations=countries)

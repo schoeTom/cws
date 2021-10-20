@@ -134,7 +134,14 @@ def print_variables():
 
 # responsible for the CLI so that the user can select all the variables for a diagram
 def get_user_input(diag):
-    print_variables()
+    if input("Do you want to see every variable or only a few? every/few:") == "every":
+        print_variables()
+    else:
+        print("Population (thousands)")
+        print("% urban population")
+        print("basic national hygiene")
+        print("at least basic national water")
+        print("% at least basic national sanitation")
     type = ""
     while type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
         type = input("Select the type of diagram you want to create. Available are scatterplot, barplot, lineplot and map:").lower()
