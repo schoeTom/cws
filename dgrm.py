@@ -213,7 +213,7 @@ class Diagram:
             key_on='feature.properties.ISO_A3',
             fill_color=color4,
             legend_name=variable
-        ).add_to(m)
+        ).add_to(m).geojson.add_child(folium.features.GeoJsonTooltip(['ADMIN'], labels=False))
         m.save('map.html')
         webbrowser.open_new('map.html')
 
