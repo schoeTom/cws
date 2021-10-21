@@ -208,6 +208,9 @@ def run_program():
         var_w=variables_water,
         var_h=variables_hygiene
     )
+    variables = ["Population (thousands)", "basic national hygiene"]
+    nations = ["average", "Germany"]
+    #dgrm.Diagram.multi_dataframe(diag, variables, nations)
     get_user_input(diag)
     #dgrm.Diagram.create_map(diag)
 

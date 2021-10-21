@@ -52,7 +52,7 @@ class Diagram:
             averages.append(tempAverages)
         list = ["average" for i in range(0, 21)]
         dfAverages = pd.DataFrame(data=averages)
-        dfAverages["line"] = list
+        dfAverages["country"] = list
         dfAverages["year"] = range(2000, 2021)
         dfAverages.columns = [variable, 'country', 'year']
         return dfAverages
@@ -68,9 +68,8 @@ class Diagram:
             index = index+1
         return iso
 
-
-    # return a dataframe containing the data for a single nation for a single variable over time
-    def get_data_for_nation(self, variable="Population (thousands)", nation="Madagascar"):
+    # returns a dataframe containing only the values requested from a single variable and nation
+    def get_data(self, variable, nation):
         if variable in self.variables_water:
             df = self.dfWater
         elif variable in self.variables_hygiene:
@@ -88,7 +87,11 @@ class Diagram:
             data = data.iloc[:, self.variables_sanitation[variable]]
         else:
             print("ERROR: variable not found!")
+        return data
 
+    # return a dataframe containing the data for a single nation for a single variable over time
+    def get_data_for_nation(self, variable="Population (thousands)", nation="Madagascar"):
+        data = self.get_data(variable=variable, nation=nation)
         list_countries = [nation for i in range(0, 21)]
         iso = self.get_iso(nation)
         list_iso = [iso for i in range(0, 21)]
@@ -130,6 +133,21 @@ class Diagram:
                 dataframes.append(Diagram.get_data_for_nation(self, variable, nation))
         result = pd.concat(dataframes)
         return result
+
+    # creates and returns a dataframe containing all the data for a list of variables and multiple countries
+    def multi_dataframe(self, variables, nations):
+        dataframes = []
+        for variable in variables:
+            for nation in nations:
+                if nation == "average":
+                    print("NEED TO ADD AVERAGE TO DOUBLE DATAFRAME")
+                else:
+                    dataframes[variable] = self.get_data(variable, nation)
+                list_countries = [nation for i in range(0, 21)]
+                dataframes["country"] = dataframes["country"] + list_countries
+                dataframes["year"] = dataframes["year"] + range(2000, 2021)
+        print(dataframes)
+        return dataframes
 
     # creates a plot comparing one variable of one country against the average over time
     def lineplot_single_variable_over_time(self, variable, nations: [str]):
