@@ -115,7 +115,6 @@ class Diagram:
         result["year"] = range(2000, 2021)
         result["ISO_A3"] = list_iso
         result.columns = [variables[0], variables[1], "country", "year", "ISO_A3"]
-        print(result)
         return result
 
     # returns all the data from every country for a specific variable and year
@@ -150,24 +149,28 @@ class Diagram:
         result = pd.concat(dataframes)
         return result
 
-    # creates and returns a dataframe containing all the data for two of variables and two countries
+    # creates and returns a dataframe containing all the data for multiple of variables and countries
     def multi_dataframe(self, variables, nations):
-        df1 = pd.DataFrame()
-        df2 = pd.DataFrame()
-        if nations[0] == "average":
-            df1 = self.get_average_over_time(variables[0])
-            df1 = pd.concat([df1, self.get_average_over_time(variables[1])], axis=1, join='inner')
-        else:
-            df1 = self.get_double_data(variables, nations[0])
-        if nations[1] == "average":
-            df2 = self.get_average_over_time(variables[0])
-            df2 = pd.concat([df2, self.get_average_over_time(variables[1])], axis=1, join='inner')
-        else:
-            df2 = self.get_double_data(variables, nations[1])
-        print(df1)
-        print(df2)
-        df1.append(df2)
-        return df1
+        dataframes = []
+        for index in range(0, len(variables)):
+            dataframes.append(pd.DataFrame())
+        for index in range(0, len(dataframes)):
+            for nation in nations:
+                if nation == "average":
+                    frame = pd.DataFrame()
+                    for var in variables:
+                        frame = pd.concat([frame, self.get_average_over_time(var)], axis=1, join='inner')
+                    dataframes[index] = frame
+                else:
+                    if dataframes[index].size == 0:
+                        dataframes[index] = self.get_double_data(variables, nation)
+                    else:
+                        df = self.get_double_data(variables, nation)
+                        print(df)
+                        dataframes[index].append(df)
+        #print(dataframes)
+        result = pd.concat(dataframes)
+        return result
 
     # creates a plot comparing one variable of one country against the average over time
     def lineplot_single_variable_over_time(self, variable, nations: [str]):
@@ -183,9 +186,10 @@ class Diagram:
         plt.show()
 
     def scatterplot_two_variables(self,varX: str,varY: str,nations: [str]):
-        xAxis  = Diagram.create_dataframe(self, varX, nations)
-        yAxis = Diagram.create_dataframe(self, varY, nations)
+        #xAxis  = Diagram.create_dataframe(self, varX, nations)
+        #yAxis = Diagram.create_dataframe(self, varY, nations)
         df = self.multi_dataframe((varX, varY), nations)
+
         sns.scatterplot(x=df.iloc[0, :], y=df.iloc[1, :], data=df, hue="country")
         #sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0])
         if (varX == "Year"):
