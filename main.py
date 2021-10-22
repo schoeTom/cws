@@ -208,9 +208,10 @@ def run_program():
         var_w=variables_water,
         var_h=variables_hygiene
     )
-    variables = ["Population (thousands)", "basic national hygiene"]
-    nations = ["average", "Germany"]
-    dgrm.Diagram.multi_dataframe(diag, variables, nations)
+    varX = "Population (thousands)"
+    varY = "basic national hygiene"
+    nations = ["France", "Germany"]
+    dgrm.Diagram.scatterplot_two_variables(diag, varX=varX, varY=varY, nations=nations)
     #get_user_input(diag)
 
 print('hello')

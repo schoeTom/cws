@@ -102,6 +102,22 @@ class Diagram:
         result.columns = [variable, "country", "year", "ISO_A3"]
         return result
 
+    # returns a dataframe containing only the values requested from a two variable and nation
+    # NOTE: needs two variables, less will throw an error, more variables will be ignored
+    def get_double_data(self, variables, nation):
+        values_a = self.get_data(variable=variables[0], nation=nation)
+        values_b = self.get_data(variable=variables[1], nation=nation)
+        list_countries = [nation for i in range(0, 21)]
+        iso = self.get_iso(nation)
+        list_iso = [iso for i in range(0, 21)]
+        result = pd.concat([values_a, values_b], axis=1, join='inner')
+        result["country"] = list_countries
+        result["year"] = range(2000, 2021)
+        result["ISO_A3"] = list_iso
+        result.columns = [variables[0], variables[1], "country", "year", "ISO_A3"]
+        print(result)
+        return result
+
     # returns all the data from every country for a specific variable and year
     # needed for the data for maps
     def get_world_data(self, variable="Population (thousands)", year=2020):
@@ -134,26 +150,24 @@ class Diagram:
         result = pd.concat(dataframes)
         return result
 
-    # creates and returns a dataframe containing all the data for a list of variables and multiple countries
+    # creates and returns a dataframe containing all the data for two of variables and two countries
     def multi_dataframe(self, variables, nations):
-        dataframes = pd.DataFrame()
-        for variable in variables:
-            for nation in nations:
-                if nation == "average":
-                    print("NEED TO ADD AVERAGE TO DOUBLE DATAFRAME")
-                else:
-                    data = self.get_data(variable=variable, nation=nation).to_frame()
-                    dataframes.insert(loc=0, column=variable, value=data)
-                    print(dataframes)
-                list_countries = [nation for i in range(0, 21)]
-                if dataframes.size == 0:
-                    dataframes["country"] = list_countries
-                    dataframes["year"] = range(2000, 2021)
-                else:
-                    dataframes["country"] = dataframes["country"].append(pd.Series(list_countries))
-                    dataframes["year"] = dataframes["year"].append(range(2000, 2021))
-        #print(dataframes["basic national hygiene"])
-        return dataframes
+        df1 = pd.DataFrame()
+        df2 = pd.DataFrame()
+        if nations[0] == "average":
+            df1 = self.get_average_over_time(variables[0])
+            df1 = pd.concat([df1, self.get_average_over_time(variables[1])], axis=1, join='inner')
+        else:
+            df1 = self.get_double_data(variables, nations[0])
+        if nations[1] == "average":
+            df2 = self.get_average_over_time(variables[0])
+            df2 = pd.concat([df2, self.get_average_over_time(variables[1])], axis=1, join='inner')
+        else:
+            df2 = self.get_double_data(variables, nations[1])
+        print(df1)
+        print(df2)
+        df1.append(df2)
+        return df1
 
     # creates a plot comparing one variable of one country against the average over time
     def lineplot_single_variable_over_time(self, variable, nations: [str]):
@@ -168,13 +182,12 @@ class Diagram:
         sns.barplot(data=dataframe, x="year", y=variable, hue="country")
         plt.show()
 
-    def scatterplot_two_variables(self,
-                                  varX: str,
-                                  varY: str,
-                                  nations: [str]):
+    def scatterplot_two_variables(self,varX: str,varY: str,nations: [str]):
         xAxis  = Diagram.create_dataframe(self, varX, nations)
         yAxis = Diagram.create_dataframe(self, varY, nations)
-        sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0])
+        df = self.multi_dataframe((varX, varY), nations)
+        sns.scatterplot(x=df.iloc[0, :], y=df.iloc[1, :], data=df, hue="country")
+        #sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0])
         if (varX == "Year"):
             plt.xticks(range(2000, 2021))
         plt.title(nations)
