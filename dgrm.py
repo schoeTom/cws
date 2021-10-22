@@ -136,17 +136,23 @@ class Diagram:
 
     # creates and returns a dataframe containing all the data for a list of variables and multiple countries
     def multi_dataframe(self, variables, nations):
-        dataframes = []
+        dataframes = pd.DataFrame()
         for variable in variables:
             for nation in nations:
                 if nation == "average":
                     print("NEED TO ADD AVERAGE TO DOUBLE DATAFRAME")
                 else:
-                    dataframes[variable] = self.get_data(variable, nation)
+                    data = self.get_data(variable=variable, nation=nation).to_frame()
+                    dataframes.insert(loc=0, column=variable, value=data)
+                    print(dataframes)
                 list_countries = [nation for i in range(0, 21)]
-                dataframes["country"] = dataframes["country"] + list_countries
-                dataframes["year"] = dataframes["year"] + range(2000, 2021)
-        print(dataframes)
+                if dataframes.size == 0:
+                    dataframes["country"] = list_countries
+                    dataframes["year"] = range(2000, 2021)
+                else:
+                    dataframes["country"] = dataframes["country"].append(pd.Series(list_countries))
+                    dataframes["year"] = dataframes["year"].append(range(2000, 2021))
+        #print(dataframes["basic national hygiene"])
         return dataframes
 
     # creates a plot comparing one variable of one country against the average over time

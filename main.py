@@ -210,9 +210,8 @@ def run_program():
     )
     variables = ["Population (thousands)", "basic national hygiene"]
     nations = ["average", "Germany"]
-    #dgrm.Diagram.multi_dataframe(diag, variables, nations)
-    get_user_input(diag)
-    #dgrm.Diagram.create_map(diag)
+    dgrm.Diagram.multi_dataframe(diag, variables, nations)
+    #get_user_input(diag)
 
 print('hello')
 run_program()
