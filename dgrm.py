@@ -59,6 +59,8 @@ class Diagram:
 
     # returns the iso of a single country
     def get_iso(self, country):
+        if country == "average":
+            return "AVG"
         df = self.dfSanitation.iloc[:, 0:2]
         iso = ""
         index = 0
@@ -77,7 +79,7 @@ class Diagram:
         elif variable in self.variables_sanitation:
             df = self.dfSanitation
         else:
-            print("ERROR: variable not found!")
+            print("ERROR: variable " + variable + " not found! Did you maybe misspell it?")
         data = df[df.iloc[:, 0] == nation]
         if variable in self.variables_water:
             data = data.iloc[:, self.variables_water[variable]]
@@ -154,21 +156,26 @@ class Diagram:
         dataframes = []
         for index in range(0, len(variables)):
             dataframes.append(pd.DataFrame())
+        frame = pd.DataFrame()
         for index in range(0, len(dataframes)):
             for nation in nations:
                 if nation == "average":
-                    frame = pd.DataFrame()
-                    for var in variables:
-                        frame = pd.concat([frame, self.get_average_over_time(var)], axis=1, join='inner')
-                    dataframes[index] = frame
+                    df = self.get_average_over_time(variables[index])
+                    if frame.empty:
+                        frame = df
+                    else:
+                        frame = pd.concat([frame, df], axis=1, join='inner', copy=False)
+                    frame = frame.loc[:, ~frame.columns.duplicated()]
+                    if dataframes[index].size == 0:
+                        dataframes[index] = frame
+                    else:
+                        dataframes[index] = pd.concat([dataframes[index].append(frame)])
                 else:
                     if dataframes[index].size == 0:
                         dataframes[index] = self.get_double_data(variables, nation)
                     else:
                         df = self.get_double_data(variables, nation)
-                        print(df)
-                        dataframes[index].append(df)
-        #print(dataframes)
+                        dataframes[index] = pd.concat([dataframes[index].append(df)])
         result = pd.concat(dataframes)
         return result
 
@@ -186,25 +193,19 @@ class Diagram:
         plt.show()
 
     def scatterplot_two_variables(self,varX: str,varY: str,nations: [str]):
-        #xAxis  = Diagram.create_dataframe(self, varX, nations)
-        #yAxis = Diagram.create_dataframe(self, varY, nations)
         df = self.multi_dataframe((varX, varY), nations)
-
-        sns.scatterplot(x=df.iloc[0, :], y=df.iloc[1, :], data=df, hue="country")
-        #sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0])
+        sns.scatterplot(x=df.iloc[:, 0], y=df.iloc[:, 1], data=df, hue="country", legend=True)
         if (varX == "Year"):
             plt.xticks(range(2000, 2021))
-        plt.title(nations)
+        plt.title(varX + " vs " + varY)
         plt.show()
 
     def scatterplot_three_variables(self, varX: str, varY: str, varZ: str, nations: [str]):
-        xAxis = Diagram.create_dataframe(self, varX, nations)
-        yAxis = Diagram.create_dataframe(self, varY, nations)
-        zAxis = Diagram.create_dataframe(self, varZ, nations)
-        sns.scatterplot(x=xAxis.iloc[:, 0], y=yAxis.iloc[:, 0], size=zAxis.iloc[:, 0])
+        df = self.multi_dataframe((varX, varY, varZ), nations)
+        sns.scatterplot(x=df.iloc[:, 0], y=df.iloc[:, 1], size=df.iloc[:, 2], data=df, hue="country", legend=True)
         if (varX == "Year"):
             plt.xticks(range(2000, 2021))
-        plt.title(nations)
+        plt.title(varX + " vs " + varY + " with size: " + varZ)
         plt.show()
 
     # this function is called only from the main file to create the diagram.
@@ -214,7 +215,7 @@ class Diagram:
         if type == Type.SCATTER:
             if len(variable) == 2 and len(nations) > 0:
                 Diagram.scatterplot_two_variables(self, variable[0], variable[1], nations)
-            elif len(variable) == 3 and np.unique(variable) == 3 and len(nations) > 0:
+            elif len(variable) == 3 and len(nations) > 0:
                 Diagram.scatterplot_three_variables(self, variable[0], variable[1], variable[2], nations)
             else:
                 print("Scatterplots require 2-3 different variables, aswell as at least one country!")
