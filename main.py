@@ -3,6 +3,7 @@ import dgrm
 
 from enum import Enum
 
+
 class Sheet(Enum):
     WATER = 0
     SANITATION = 1
@@ -113,11 +114,13 @@ def read_data():
     dfSanitation = pd.read_csv("Sanitation_28_09_2021.csv", header=None)
     dfHygiene = pd.read_csv("Hygiene_28_09_2021.csv", header=None)
 
+
 # prints every country
 def print_nations():
     for country in dfSanitation.iloc[:, 0].unique().tolist():
         print(country)
     print("Just type any country that you want. Make sure it's spelled correctly.")
+
 
 # prints every variable from every sheet
 def print_variables():
@@ -130,7 +133,9 @@ def print_variables():
     print("Variables from the hygiene sheet:")
     for key in variables_hygiene.keys():
         print(key)
-    print("Just type any variable that you want. You don't have to specify the sheet it's from. Make sure it's spelled correctly.")
+    print(
+        "Just type any variable that you want. You don't have to specify the sheet it's from. Make sure it's spelled correctly.")
+
 
 # responsible for the CLI so that the user can select all the variables for a diagram
 def get_user_input(diag):
@@ -144,12 +149,14 @@ def get_user_input(diag):
         print("% at least basic national sanitation")
     type = ""
     while type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
-        type = input("Select the type of diagram you want to create. Available are scatterplot, barplot, lineplot and map:").lower()
+        type = input(
+            "Select the type of diagram you want to create. Available are scatterplot, barplot, lineplot and map:").lower()
         if type != "scatterplot" and type != "barplot" and type != "lineplot" and type != "map":
             print("Error: Unrecognized type!")
     variables = []
     if type == "scatterplot":
-        sum = input("Please choose whether you want two or three variables. The third one would determine the size of each individual point:")
+        sum = input(
+            "Please choose whether you want two or three variables. The third one would determine the size of each individual point:")
         variables.append(input("Please choose the first variable for the x axis:"))
         variables.append(input("Please choose the second variable for the y axis:"))
         if sum == 3 or sum == "3":
@@ -170,14 +177,14 @@ def get_user_input(diag):
                     finished = True
                     nations.remove("finished")
             if not finished:
-                nations.append(str(input("Please select a country you want to add. Type 'average' for the worldwide average. Type 'finished' when you are finished:")))
+                nations.append(str(input(
+                    "Please select a country you want to add. Type 'average' for the worldwide average. Type 'finished' when you are finished:")))
         if type == "scatterplot":
             diag.create_plot(dgrm.Type.SCATTER, variables, nations)
         elif type == "barplot":
             diag.create_plot(dgrm.Type.BAR, variables, nations)
         elif type == "lineplot":
             diag.create_plot(dgrm.Type.LINE, variables, nations)
-
 
 
 # creates csv files from excelfiles, shouldnt be needed ever again, didnt delete for completeness
@@ -209,6 +216,7 @@ def run_program():
         var_h=variables_hygiene
     )
     get_user_input(diag)
+
 
 print('hello')
 run_program()

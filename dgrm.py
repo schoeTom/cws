@@ -1,10 +1,9 @@
+import sys
 import webbrowser
 from enum import Enum
-
 import folium
 import geojson
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -14,7 +13,6 @@ class Type(Enum):
     BAR = 1
     LINE = 2
     MAP = 3
-
 
 
 class Diagram:
@@ -46,16 +44,16 @@ class Diagram:
             print("ERROR: variables index out of bound.")
         averages = []
         for year in range(2000, 2021):
-            tempAverages = df[df.iloc[:, 2] == year]
-            tempAverages = tempAverages.iloc[:, index]
-            tempAverages = sum(tempAverages) / len(tempAverages)
-            averages.append(tempAverages)
+            temp_averages = df[df.iloc[:, 2] == year]
+            temp_averages = temp_averages.iloc[:, index]
+            temp_averages = sum(temp_averages) / len(temp_averages)
+            averages.append(temp_averages)
         list = ["average" for i in range(0, 21)]
-        dfAverages = pd.DataFrame(data=averages)
-        dfAverages["country"] = list
-        dfAverages["year"] = range(2000, 2021)
-        dfAverages.columns = [variable, 'country', 'year']
-        return dfAverages
+        df_averages = pd.DataFrame(data=averages)
+        df_averages["country"] = list
+        df_averages["year"] = range(2000, 2021)
+        df_averages.columns = [variable, 'country', 'year']
+        return df_averages
 
     # returns the iso of a single country
     def get_iso(self, country):
@@ -67,7 +65,7 @@ class Diagram:
         while iso == "":
             if df.iloc[index, 0] == country:
                 iso = df.iloc[index, 1]
-            index = index+1
+            index = index + 1
         return iso
 
     # returns a dataframe containing only the values requested from a single variable and nation
@@ -80,6 +78,7 @@ class Diagram:
             df = self.dfSanitation
         else:
             print("ERROR: variable " + variable + " not found! Did you maybe misspell it?")
+            sys.exit()
         data = df[df.iloc[:, 0] == nation]
         if variable in self.variables_water:
             data = data.iloc[:, self.variables_water[variable]]
@@ -130,14 +129,14 @@ class Diagram:
     # creates a plot showing one variable for one country over time
     def print_single_variable_of_single_country_over_time(self, variable: str, country: str):
         dfs = Diagram.get_data_for_nation(self, variable=variable, nation=country)
-        xAxis = dfs[dfs.iloc[:, 0] == country]
-        yAxis = xAxis
-        xAxis = xAxis.iloc[:, 2]
+        x_axis = dfs[dfs.iloc[:, 0] == country]
+        y_axis = x_axis
+        x_axis = x_axis.iloc[:, 2]
         plt.title(country)
         plt.ylabel(variable)
         plt.xlabel("Year")
         plt.xticks(range(2000, 2021))
-        plt.plot(xAxis, yAxis)
+        plt.plot(x_axis, y_axis)
         plt.show()
 
     # creates and returns a dataframe containing all the data for one specific variable for multiple countries
@@ -192,20 +191,20 @@ class Diagram:
         sns.barplot(data=dataframe, x="year", y=variable, hue="country")
         plt.show()
 
-    def scatterplot_two_variables(self,varX: str,varY: str,nations: [str]):
-        df = self.multi_dataframe((varX, varY), nations)
+    def scatterplot_two_variables(self, var_x: str, var_y: str, nations: [str]):
+        df = self.multi_dataframe((var_x, var_y), nations)
         sns.scatterplot(x=df.iloc[:, 0], y=df.iloc[:, 1], data=df, hue="country", legend=True)
-        if (varX == "Year"):
+        if var_x == "Year":
             plt.xticks(range(2000, 2021))
-        plt.title(varX + " vs " + varY)
+        plt.title(var_x + " vs " + var_y)
         plt.show()
 
-    def scatterplot_three_variables(self, varX: str, varY: str, varZ: str, nations: [str]):
-        df = self.multi_dataframe((varX, varY, varZ), nations)
+    def scatterplot_three_variables(self, var_x: str, var_y: str, var_z: str, nations: [str]):
+        df = self.multi_dataframe((var_x, var_y, var_z), nations)
         sns.scatterplot(x=df.iloc[:, 0], y=df.iloc[:, 1], size=df.iloc[:, 2], data=df, hue="country", legend=True)
-        if (varX == "Year"):
+        if var_x == "Year":
             plt.xticks(range(2000, 2021))
-        plt.title(varX + " vs " + varY + " with size: " + varZ)
+        plt.title(var_x + " vs " + var_y + " with size: " + var_z)
         plt.show()
 
     # this function is called only from the main file to create the diagram.
@@ -231,7 +230,7 @@ class Diagram:
                 print("Barplots require one variable, aswell as at least one country!")
         elif type == Type.MAP:
             year = int(year)
-            if year >= 2000 and year <= 2020 and len(nations) == 0:
+            if 2000 <= year <= 2020 and len(nations) == 0:
                 print("Creating map. This might take a moment.")
                 Diagram.create_map(self, variable, year)
             else:
@@ -242,10 +241,7 @@ class Diagram:
     def create_map(self, variable='% urban population', year=2000):
         data = self.get_world_data(variable, year)
         world_geo = geojson.load(open('countries.geojson'))
-        color1 = 'YlOrRd'
-        color2 = 'YlGn'
-        color3 = 'BuPu'     # TODO: delete unused colors
-        color4 = 'YlOrBr'   # my current favourite for a colorscheme
+        color4 = 'YlOrBr'
         m = folium.Map(location=[35, 0], zoom_start=2.6)
         folium.Choropleth(
             geo_data=world_geo,
@@ -258,4 +254,3 @@ class Diagram:
         ).add_to(m).geojson.add_child(folium.features.GeoJsonTooltip(['ADMIN'], labels=False))
         m.save('map.html')
         webbrowser.open_new('map.html')
-
