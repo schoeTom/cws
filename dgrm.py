@@ -76,15 +76,15 @@ class Diagram:
             df = self.dfHygiene
         elif variable in self.variables_sanitation:
             df = self.dfSanitation
-        else:
-            print("ERROR: variable " + variable + " not found! Did you maybe misspell it?")
-            sys.exit()
+        #else:
+        #    print("ERROR: variable " + variable + " not found! Did you maybe misspell it?")
+        #    sys.exit()
         data = df[df.iloc[:, 0] == nation]
         if variable in self.variables_water:
             data = data.iloc[:, self.variables_water[variable]]
         elif variable in self.variables_hygiene:
             data = data.iloc[:, self.variables_hygiene[variable]]
-        elif variable in self.variables_hygiene:
+        elif variable in self.variables_sanitation:
             data = data.iloc[:, self.variables_sanitation[variable]]
         else:
             print("ERROR: variable not found!")
